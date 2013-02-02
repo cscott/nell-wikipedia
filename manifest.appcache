@@ -1,0 +1,20 @@
+CACHE MANIFEST
+# SR2UIYLarZ0DFrIq8asC+HBTmGc=
+
+CACHE:
+CNAME
+css/app.css
+img/glyphicons-halflings-white.png
+img/glyphicons-halflings.png
+img/icon-128.png
+img/icon-16.png
+img/icon-48.png
+index.html
+js/app.js
+manifest.webapp
+
+# catch-all for anything else
+NETWORK:
+*
+http://*
+https://*
