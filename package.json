@@ -10,7 +10,8 @@
     "dependencies": {
       "jquery": "github:jquery/jquery/1.9.0",
       "underscore": "github:amdjs/underscore/1.4.4",
-      "backbone": "github:amdjs/backbone/0.9.10"
+      "backbone": "github:amdjs/backbone/0.9.10",
+      "HTML5-Progress-polyfill": "github:LeaVerou/HTML5-Progress-polyfill/master"
     }
   }
 }
