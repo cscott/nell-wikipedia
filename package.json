@@ -1,10 +1,18 @@
 {
+  "name": "nell-wikipedia",
+  "version": "0.0.1",
+  "author": "C. Scott Ananian <cscott@laptop.org>",
+  "description": "An HTML5 offline Wikipedia reader",
+  "keywords": ["wikipedia"],
+  "license": "GPL",
   "amd": {
     "baseUrl": "www/js/lib"
   },
   "dependencies": {
     "volo-ghdeploy": "*",
-    "volo-appcache": "*"
+    "volo-appcache": "*",
+    "connect": "~2.4.4",
+    "less-middleware": "~0.1.5"
   },
   "volo": {
     "dependencies": {
