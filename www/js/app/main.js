@@ -13,25 +13,18 @@ define(function (require) {
     require('bootstrap/modal');
     require('bootstrap/transition');
 
-    // Page routing
-    var WikiRouter = Backbone.Router.extend({
-        routes: {
-            "about": "showAbout",
-            "wiki/*title": "wikiPage",
-            "*other": "defaultPage"
-        },
-        showAbout: function() {
-            this.navigate("wiki/Nell:About", true);
-        },
-        defaultPage: function() {
-            this.navigate("wiki/Nell:Home", true);
-        },
-        wikiPage: function(title) {
-            console.log('wiki',title,'opened');
+    var Router = require('./router');
+    var myRouter = new Router();
+    Backbone.history.start({ pushState: false/*true*/, root: '/' });
+    // navigation should go through the router
+    $(document).on('click', 'a:not([data-bypass])', function(evt) {
+        var href = $(this).attr('href');
+        // check for relative paths.
+        if (href && !href.match(/^\w+:\/\//)) {
+            evt.preventDefault();
+            Backbone.history.navigate(href, true);
         }
     });
-    var myRouter = new WikiRouter();
-    Backbone.history.start();
 
     // Wait for the DOM to be ready before showing the network and appCache
     // state.
