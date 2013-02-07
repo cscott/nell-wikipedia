@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# SR2UIYLarZ0DFrIq8asC+HBTmGc=
+# Q0YbpX+L1AQs7encRVOtaSy71jA=
 
 CACHE:
 CNAME
@@ -12,6 +12,15 @@ img/icon-48.png
 index.html
 js/app.js
 manifest.webapp
+static/biology.png
+static/earth.png
+static/humanities.png
+static/math.png
+static/phys_science.png
+static/socialscience.png
+static/society.png
+static/technology.png
+static/wikipedia.png
 
 # catch-all for anything else
 NETWORK:
