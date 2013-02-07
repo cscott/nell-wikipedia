@@ -5,7 +5,7 @@ define(['backbone','instaview','./page'], function(Backbone, InstaView, Page) {
             this.model = new Page.Model({title: options.title});
             this.model.fetch();
             this.render();
-            this.model.on('changed', this.render, this);
+            this.model.on('change', this.render, this);
             $('#main-content').append(this.$el);
         },
         render: function() {

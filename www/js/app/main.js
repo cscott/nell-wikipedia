@@ -5,6 +5,8 @@ define(function (require) {
 
     var $ = require('jquery');
     var Backbone = require('backbone');
+    var Config = require('./config');
+    var Router = require('./router');
 
     // Dependencies that do not have an export of their own, just attach
     // to other objects, like jQuery. These are just used in the example
@@ -13,16 +15,19 @@ define(function (require) {
     require('bootstrap/modal');
     require('bootstrap/transition');
 
-    var Router = require('./router');
     var myRouter = new Router();
-    Backbone.history.start({ pushState: false/*true*/, root: '/' });
+    Backbone.history.start({ pushState: !Router.use_hash, root: '/' });
     // navigation should go through the router
     $(document).on('click', 'a:not([data-bypass])', function(evt) {
         var href = $(this).attr('href');
         // check for relative paths.
         if (href && !href.match(/^\w+:\/\//)) {
             evt.preventDefault();
-            Backbone.history.navigate(href, true);
+            if (href.slice(0,6) === '/wiki/') {
+                myRouter.gotoWiki(href.slice(6));
+            } else {
+                Backbone.history.navigate(href, true);
+            }
         }
     });
 
