@@ -1,5 +1,5 @@
 // Backbone router!
-define(['backbone', './config', './page', './util', './view'], function(Backbone, Config, Page, Util, _) {
+define(['backbone', './config', './page', './util'], function(Backbone, Config, Page, Util) {
     // Page routing
     var use_hash = false, base = Config.path_root;
     if (base[0]=='#') {
@@ -7,6 +7,9 @@ define(['backbone', './config', './page', './util', './view'], function(Backbone
     }
     var Router = Backbone.Router.extend({
         routes: { },
+        initialize: function(options) {
+            this.view = options.view;
+        },
         showAbout: function() {
             this.gotoWiki(Config.about);
         },
@@ -15,7 +18,9 @@ define(['backbone', './config', './page', './util', './view'], function(Backbone
         },
         wikiPage: function(title) {
             console.log('wiki view',title,'opened');
-            var view = new Page.View({title: title});
+            var model = new Page.Model({title: title});
+            this.view.setModel(model);
+            model.fetch();
         },
         gotoWiki: function(title) {
             this.navigate(base+"wiki/"+Util.normalize_title(title), true);

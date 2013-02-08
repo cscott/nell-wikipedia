@@ -6,6 +6,7 @@ define(function (require) {
     var $ = require('jquery');
     var Backbone = require('backbone');
     var Config = require('./config');
+    var View = require('./view');
     var Router = require('./router');
 
     // Dependencies that do not have an export of their own, just attach
@@ -15,7 +16,7 @@ define(function (require) {
     require('bootstrap/modal');
     require('bootstrap/transition');
 
-    var myRouter = new Router();
+    var myRouter = new Router({view: new View()});
     Backbone.history.start({ pushState: !Router.use_hash, root: '/' });
     // navigation should go through the router
     $(document).on('click', 'a:not([data-bypass])', function(evt) {
