@@ -1,0 +1,36 @@
+Instaview:
+ 1) put config in an instance object, so you don't alter behavior of all
+    users of instaview.
+ 2) allow overwriting rendering functions for:
+    a) intra-wiki links
+    b) image links
+    c) alternative language links
+    d) external links
+ 3) write routine to expand templates
+    preprocessing stage, before html rendering
+    keep content as array of chunks, and incrementally replace chunks
+    with expanded versions?
+    has to be async; provide as a parameter a function that will fetch
+    a given template.
+ 4) provide analysis functions (maybe by overriding rendering functions?)
+    a) all templates, all non-template refs
+    b) "is redirect" (and if so, to where)
+       (see 'Pi' article)
+App:
+ 1) xml-ize the home/about articles
+ 2) store/fetch content from local cache
+    write separate (chunked?) 'index'; actual storage is just done in
+    append-only blocks (to preserve locality of templates)
+    rewrite entire block if an article is updates (rare case?)
+    compress blocks
+ 3) make sugar-style toolbar
+ 4) properly garbage collect view
+    - allow updating model, though -- ie, we can eagerly render content
+      from our local cache, and then send a 'change' event on the model
+      if/when the online version comes back w/ an updated version.
+ 5) auto-complete article names
+ 6) collaborative browsing
+ 7) collaborative annotation
+ 8) collaborative article editing
+    - exchange/apply diffs
+    - etherpad edit
