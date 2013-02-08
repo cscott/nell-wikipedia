@@ -8,6 +8,7 @@
 // except for 'app' ones, which are in a sibling
 // directory.
 requirejs.config({
+    waitSeconds: 30, // be kind to android
     baseUrl: 'js/lib',
     paths: {
         app: '../app'
