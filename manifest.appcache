@@ -1,17 +1,19 @@
 CACHE MANIFEST
-# Q0YbpX+L1AQs7encRVOtaSy71jA=
+# pyD2FNOSmpKWV3mLIj/+NMam7s8=
 
 CACHE:
-CNAME
 css/app.css
 img/glyphicons-halflings-white.png
 img/glyphicons-halflings.png
+img/go-home.svg
+img/go-next-paired.svg
+img/go-previous-paired.svg
 img/icon-128.png
+img/icon-16.ico
 img/icon-16.png
 img/icon-48.png
 index.html
 js/app.js
-manifest.webapp
 static/biology.png
 static/earth.png
 static/humanities.png

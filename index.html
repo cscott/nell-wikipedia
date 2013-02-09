@@ -2,30 +2,53 @@
 <html manifest="manifest.appcache">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/app.css" rel="stylesheet">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link href="css/app.css" type="text/css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/icon-16.ico" />
+    <link rel="apple-touch-icon" href="img/icon-128.png" />
+
+<!-- startup image for web apps - iPad - landscape (748x1024)
+     Note: iPad landscape startup image has to be exactly 748x1024
+     pixels (portrait, with contents rotated).-->
+<link rel="apple-touch-startup-image"
+      href="img/splash-748x1024.png"
+      media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)" />
+<!-- startup image for web apps - iPad - portrait (768x1004) -->
+<link rel="apple-touch-startup-image"
+      href="img/splash-768x1004.png"
+      media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
+<!-- startup image for web apps - iPhone (320x460) -->
+<link rel="apple-touch-startup-image"
+      href="img/splash-320x460.png"
+      media="screen and (max-device-width: 320px)" />
+<!-- startup image for web apps - iPhone retina -->
+<link rel="apple-touch-startup-image"
+      href="img/splash-640x920.png"
+      media="screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2)" />
+
+<title>Nell's Wikipedia</title>
+
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-
-                <a class="brand" href="#">Nell's Wikipedia</a>
-
+    <div id="sugar-toolbar">
+      <button id="button-home"><img src="img/go-home.svg" /></button>
+      <button id="button-prev"><img src="img/go-previous-paired.svg" /></button>
+      <button id="button-next"><img src="img/go-next-paired.svg" /></button>
+      <input id="search" type="text" class="search-query"
+             placeholder="Article Title" />
+    </div>
+<!--
                 <ul class="nav pull-right">
                     <li class="dropdown">
                         <button class="webapp-install btn btn-primary"
                                 style="display: none;">Install</button>
                    </li>
                 </ul>
-             </div>
-        </div>
-    </div>
-
-    <div class="container demo" id="main-content">
-        <h1>Bootstrap starter template</h1>
-        <p>Use this document as a way to quick start any new project.
-        All you get is this message and a barebones HTML document.</p>
+-->
+    <div id="sugar-content">
+    <div class="container" id="main-content">
 
         <div>
             <div style="display: none;" class="webapp-error alert alert-block">
@@ -93,6 +116,7 @@
                    data-toggle="modal">Launch demo modal</a>
             </div>
         </div>
+    </div>
     </div>
     <!-- Load the main app module via the module loader -->
     <script async data-main="js/app" src="js/app.js" charset="utf-8"></script>
