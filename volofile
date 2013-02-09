@@ -129,7 +129,8 @@ module.exports = {
     //Runs the build, and generates the appcache manifest
     appcache: require('volo-appcache')({
 	depends: ['build'],
-	dir: buildDir
+	dir: buildDir,
+	exclude: /^(CNAME|img\/splash|manifest.webapp)/
     }),
 
     //Deploys the code to github pages.
