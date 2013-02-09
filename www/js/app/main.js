@@ -13,6 +13,7 @@ define(function (require) {
     // to other objects, like jQuery. These are just used in the example
     // bootstrap modal, not directly in the UI for the network and appCache
     // displays.
+    require('bootstrap/typeahead');
     require('bootstrap/modal');
     require('bootstrap/transition');
 
@@ -31,6 +32,16 @@ define(function (require) {
             }
         }
     });
+    // basic forward/back navigation
+    $(document).on('click', '#button-home', function(evt) {
+        myRouter.gotoHome();
+    });
+    $(document).on('click', '#button-prev', function(evt) {
+        window.history.back();
+    });
+    $(document).on('click', '#button-next', function(evt) {
+        window.history.forward();
+    });
 
     // Wait for the DOM to be ready before showing the network and appCache
     // state.
@@ -39,5 +50,21 @@ define(function (require) {
         require('./uiNetwork')();
         require('./uiAppCache')();
         require('./uiWebAppInstall')();
+        //bind the search field
+        $('#search').typeahead({
+            source: function(query, process) {
+                // XXX implement me
+                process(['abc','xyz']);
+            },
+            updater: function(item) {
+                // XXX update view to match
+                return item;
+            }
+        }).on('keydown', function(event) {
+            if (event.which===13 && ! $('#search').data('typeahead').shown) {
+                var title = $('#search').val();
+                myRouter.gotoWiki(title);
+            }
+        });
     });
 });

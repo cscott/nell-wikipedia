@@ -12,6 +12,8 @@ module.exports = {
     //dynamic loading of scripts, pass -dynamic to the build, and
     //require.js will be used to load scripts.
     build: {
+	summary: "Builds the JS and CSS into one file each.",
+	depends: ['less'],
 	flags: {
 	    //Does not print the build output.
 	    'q': 'quiet',
@@ -131,14 +133,17 @@ module.exports = {
     }),
 
     //Deploys the code to github pages.
-    ghdeploy: require('volo-ghdeploy')(buildDir, pagesDir),
+    ghdeploy: (function() {
+	var cmd = require('volo-ghdeploy')(buildDir, pagesDir)
+	cmd.depends = ['appcache'];
+	return cmd;
+    })(),
 
     //Runs less on the .less files in tools/less to generate the CSS files.
     less: function (d, v, namedArgs) {
 	var q = v.require('q');
 	q.all([
-	    v.exec('node tools/oneless.js tools/less/bootstrap.less > www/css/bootstrap.css'),
-	    v.exec('node tools/oneless.js tools/less/responsive.less > www/css/bootstrap-responsive.css')
+	    v.exec('node tools/oneless.js --include-path=tools/less www/css/app.less > www/css/app.css')
 	])
 	.then(function () {
 	    d.resolve();
@@ -146,7 +151,10 @@ module.exports = {
 	.fail(d.reject);
     },
 
-    serve: function(d, v, namedArgs, port) {
+    serve: {
+	summary: 'Runs a development server on localhost',
+	depends: ['less'],
+	run: function(d, v, namedArgs, port) {
 	try {
 	    var connect = require('connect');
 	}
@@ -162,7 +170,10 @@ module.exports = {
 	var port = port || 8008;
 	var base = path.join(process.cwd(), namedArgs.base || 'www');
 	var middleware = [
-	    lessMiddleware({ src: base }),
+	    lessMiddleware({
+		src: base,
+		paths: ['tools/less/']
+	    }),
 	    connect.static(base),
 	    connect.directory(base),
 	];
@@ -174,6 +185,7 @@ module.exports = {
 
 	console.log("starting web server at http://localhost:" + port);
 	connect.apply(null, middleware).listen(port);
+	}
     },
 
     //Run as the result of first setting up this project via a

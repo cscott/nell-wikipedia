@@ -25,6 +25,8 @@ define(['backbone','instaview','./page'], function(Backbone, InstaView, Page) {
             var heading = document.createElement('h1');
             $(heading).text(title);
             this.$el.prepend(heading);
+            // update the search field
+            $('#search').val(title);
         }
     });
     return Page.View;

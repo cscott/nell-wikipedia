@@ -14,7 +14,7 @@ define(['backbone', './config', './page', './util'], function(Backbone, Config, 
             this.gotoWiki(Config.about);
         },
         defaultPage: function() {
-            this.gotoWiki(Config.home);
+            this.gotoHome();
         },
         wikiPage: function(title) {
             console.log('wiki view',title,'opened');
@@ -24,6 +24,9 @@ define(['backbone', './config', './page', './util'], function(Backbone, Config, 
         },
         gotoWiki: function(title) {
             this.navigate(base+"wiki/"+Util.normalize_title(title), true);
+        },
+        gotoHome: function() {
+            this.gotoWiki(Config.home);
         }
     });
     Router.prototype.routes[base+'about'] = "showAbout";
