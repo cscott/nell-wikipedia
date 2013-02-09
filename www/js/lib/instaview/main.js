@@ -279,6 +279,7 @@ InstaView.convert = function(wiki)
 	function parse_image(str)
 	{
 		// get what's in between "[[Image:" and "]]"
+		while (remain() && str.substr(-2) !== ']]') { str += sh(); }
 		var tag = str.substring(InstaView.conf.locale.image.length + 3, str.length - 2);
 		
 		var width;
