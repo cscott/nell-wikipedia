@@ -23,8 +23,8 @@ App:
     append-only blocks (to preserve locality of templates)
     rewrite entire block if an article is updates (rare case?)
     compress blocks
- 3) make sugar-style toolbar
- 4) properly garbage collect view
+ x) make sugar-style toolbar
+ x) properly garbage collect view
     - allow updating model, though -- ie, we can eagerly render content
       from our local cache, and then send a 'change' event on the model
       if/when the online version comes back w/ an updated version.
@@ -34,3 +34,13 @@ App:
  8) collaborative article editing
     - exchange/apply diffs
     - etherpad edit
+ 9) assign to HTML5 history state object to distinguish the first and last
+    pages in the history; use these to disable the prev/next buttons.
+    (ie, on initial page load, set {first:true} in state; set {last:true}
+    whenever we navigate a page, but reset {last:false} just before we
+    navigate away).
+10) add settings screen:
+    - change current language
+    - purge downloaded content
+    - download seed (for language X)
+    - submit offline edits?
