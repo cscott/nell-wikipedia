@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "author": "C. Scott Ananian <cscott@laptop.org>",
   "description": "An HTML5 offline Wikipedia reader",
-  "keywords": ["wikipedia"],
+  "keywords": [
+    "wikipedia"
+  ],
   "license": "GPL",
   "amd": {
     "baseUrl": "www/js/lib"
@@ -20,7 +22,8 @@
       "underscore": "github:amdjs/underscore/1.4.4",
       "backbone": "github:amdjs/backbone/0.9.10",
       "HTML5-Progress-polyfill": "github:LeaVerou/HTML5-Progress-polyfill/master",
-      "instaview": "github:cscott/instaview/master"
+      "instaview": "github:cscott/instaview/master",
+      "text": "github:requirejs/text/2.0.5"
     }
   }
 }
