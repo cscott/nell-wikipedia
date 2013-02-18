@@ -16,6 +16,11 @@
     "connect": "~2.4.4",
     "less-middleware": "~0.1.5"
   },
+  "devDependencies": {
+    "async": "0.2.x",
+    "commander": "1.1.x",
+    "requirejs": "2.1.x"
+  },
   "volo": {
     "dependencies": {
       "jquery": "github:jquery/jquery/1.9.0",
