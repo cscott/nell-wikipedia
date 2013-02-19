@@ -27,6 +27,8 @@ define(function (require) {
             evt.preventDefault();
             if (href.slice(0,6) === '/wiki/') {
                 myRouter.gotoWiki(href.slice(6));
+            } else if (href.slice(0,2) === './') {
+                myRouter.gotoWiki(href.slice(2));
             } else {
                 Backbone.history.navigate(href, true);
             }

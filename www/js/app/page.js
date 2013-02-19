@@ -10,6 +10,100 @@ define(['backbone', './config', 'jquery', './static', './util'], function(Backbo
     Page.Collection = Backbone.Collection.extend({
         model: Page.Model
     });
+    var url_subst = function(pattern, extra) {
+        return pattern.replace(/\{\{(\w+)\}\}/g, function(match, word) {
+            var val;
+            if (extra && Object.prototype.hasOwnProperty.call(extra, word)) {
+                val = extra[word];
+            } else if (Config[word]) {
+                val = Config[word];
+            } else {
+                return match; // unexpanded
+            }
+            return url_subst(val, extra);
+        });
+    };
+    var xhr_error = function(callback) {
+        return function(xhr, textStatus, errorThrown) {
+            callback({obj:xhr, message:textStatus, ex:errorThrown});
+        };
+    };
+    // callback(err, parsoid_format)
+    var convertMarkup = function(markup, callback) {
+        return $.ajax({
+            url: url_subst(Config.parsoid_convert_mw_url),
+            type: 'POST',
+            data: { content: markup, format: 'html' },
+            dataType: 'html',
+            error: xhr_error(callback),
+            success: function(data, textStatus, xhr) {
+                if (data) {
+                    callback(null, data);
+                } else {
+                    // error
+                    callback({obj:xhr, message:'bad data returned', ex:null});
+                }
+            }
+        });
+    };
+    var readMarkup = function(title, callback) {
+        var url=url_subst("http://{{lang}}.wikipedia.org/wiki/Special:Export");
+        var query = "select * from xml where url='"+url+"'";
+        return $.ajax({
+            url: 'http://query.yahooapis.com/v1/public/yql',
+            data: { q: query, format: 'json' },
+            dataType: 'jsonp',
+            error: xhr_error(callback),
+            success: function(data, textStatus, xhr) {
+                if (data && data.query &&
+                    data.query.results &&
+                    data.query.results.mediawiki &&
+                    data.query.results.mediawiki.page &&
+                    data.query.results.mediawiki.page.revision) {
+                    var page = data.query.results.mediawiki.page;
+                    var fields = {
+                        title: page.title || title,
+                        revision: page.revision.id,
+                        parentid: page.revision.parentid,
+                        sha1: page.revision.sha1,
+                        timestamp: page.revision.timestamp,
+                        markup: page.revision.text.content || ''
+                    };
+                    callback(null, fields);
+                } else {
+                    // error
+                    callback({obj:xhr, message:'bad data'});
+                }
+            }
+        });
+    };
+    var readParsoid = function(title, callback) {
+        var url = url_subst(Config.parsoid_fetch_url, { title: title });
+        return $.ajax({
+            url: url,
+            dataType: 'html',
+            error: xhr_error(callback),
+            success: function(data, textStatus, xhr) {
+                if (data) {
+                    var page = { revision: { text: { content: data } } };
+                    // XXX parse out revision? title? from html
+                    var fields = {
+                        title: page.title || title,
+                        revision: page.revision.id,
+                        parentid: page.revision.parentid,
+                        sha1: page.revision.sha1,
+                        timestamp: page.revision.timestamp,
+                        html: page.revision.text.content || ''
+                    };
+                    callback(null, fields);
+                } else {
+                    // error
+                    callback({obj:xhr, message:'bad data returned', ex:null});
+                }
+            }
+        });
+    };
+
     Page.sync = {
         create: function(model, options, success, error) {
         },
@@ -17,42 +111,10 @@ define(['backbone', './config', 'jquery', './static', './util'], function(Backbo
         },
         'delete': function(model, options, success, error) {
         },
-        readExternal: function(model, options, success, error) {
-            var title = Util.normalize_title(model.id);
-            var url = "http://"+Config.lang+".wikipedia.org/wiki/Special:Export/"+title;
-            var query = "select * from xml where url='"+url+"'";
-            return $.ajax({
-                url: 'http://query.yahooapis.com/v1/public/yql',
-                data: { q: query, format: 'json' },
-                dataType: 'jsonp',
-                success: function(data, textStatus, xhr) {
-                    if (data && data.query &&
-                        data.query.results &&
-                        data.query.results.mediawiki &&
-                        data.query.results.mediawiki.page &&
-                        data.query.results.mediawiki.page.revision) {
-                        var page = data.query.results.mediawiki.page;
-                        var fields = {
-                            title: page.title || title,
-                            revision: page.revision.id,
-                            parentid: page.revision.parentid,
-                            sha1: page.revision.sha1,
-                            timestamp: page.revision.timestamp,
-                            markup: page.revision.text.content || ''
-                        };
-                        success(model, fields, options);
-                    } else {
-                        error(xhr, 'bad data returned', null);
-                    }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    error(xhr, textStatus, errorThrown);
-                }
-            });
-        },
         read: function(model, options, success, error) {
             var markup;
-            switch (model.id) {
+            var title = Util.normalize_title(model.id);
+            switch (title) {
             case Config.home:
                 markup = Static.HOME;
                 break;
@@ -63,10 +125,18 @@ define(['backbone', './config', 'jquery', './static', './util'], function(Backbo
                 markup = Static.STAR;
                 break;
             default:
-                return this.readExternal(model, options, success, error);
+                return readParsoid(title, function(err, fields) {
+                    if (err) { return error(model, err.obj, options); }
+                    success(model, fields, options);
+                });
             }
-            success(model, {markup:markup}, options);
-            return true;
+            return convertMarkup(markup, function(err, parsoid_format) {
+                if (err) { return error(model, err.obj, options); }
+                success(model, {
+                    title: title,
+                    html: parsoid_format
+                }, options);
+            });
         }
     };
 
