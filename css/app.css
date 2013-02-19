@@ -60,7 +60,7 @@ sup {
 sub {
   bottom: -0.25em;
 }
-img {
+img:not([height]):not([width]) {
   
   max-width: 100%;
   
@@ -68,6 +68,8 @@ img {
   
   height: auto;
   
+}
+img {
   vertical-align: middle;
   border: 0;
   -ms-interpolation-mode: bicubic;
@@ -2416,6 +2418,8 @@ legend + .control-group {
 table {
   max-width: 100%;
   background-color: transparent;
+}
+table:not([cellspacing]) {
   border-collapse: collapse;
   border-spacing: 0;
 }
@@ -9274,4 +9278,53 @@ body {
 #main-content {
   padding-left: 5px;
   padding-right: 5px;
+}
+#main-content .float-right {
+  float: right;
+  clear: right;
+}
+#main-content .infobox {
+  border: 1px solid #aaa;
+  background-color: #f9f9f9;
+  color: black;
+  margin: 0.5em 0 0.5em 1em;
+  padding: 0.2em;
+  float: right;
+  clear: right;
+  text-align: left;
+  font-size: 88%;
+  line-height: 1.5em;
+}
+#main-content .tright {
+  float: right;
+  clear: right;
+  margin: 0.5em 0 1.3em 1.4em;
+}
+#main-content .thumb {
+  border: 1px solid #ccc;
+  padding: 3px !important;
+  background-color: #f9f9f9;
+  font-size: 94%;
+  text-align: center;
+  overflow: hidden;
+}
+#main-content .rellink,
+#main-content .dablink {
+  font-style: italic;
+  padding-left: 1.6em;
+  margin-bottom: 0.5em;
+}
+#main-content #firstHeading {
+  margin-bottom: .1em;
+  border-bottom: 1px solid #aaa;
+}
+#main-content #siteSub {
+  display: inline;
+  font-size: 92%;
+}
+#main-content #contentSub {
+  font-size: 84%;
+  line-height: 1.2em;
+  margin: 0 0 1.4em 1em;
+  color: #7d7d7d;
 }
