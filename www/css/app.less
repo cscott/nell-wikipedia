@@ -55,6 +55,10 @@ body { overflow: hidden; }
     float: right;
     clear: right;
   }
+  .float-left {
+    float: left;
+    clear: left;
+  }
   .infobox {
     border: 1px solid #aaa;
     background-color: #f9f9f9;
@@ -69,6 +73,10 @@ body { overflow: hidden; }
   .tright {
     .float-right;
     margin: 0.5em 0 1.3em 1.4em;
+  }
+  .tleft {
+    .float-left;
+    margin: 0.5em 1.4em 1.3em 0;
   }
   .thumb {
     border: 1px solid #ccc;
@@ -100,5 +108,49 @@ body { overflow: hidden; }
     line-height: 1.2em;
     margin: 0 0 1.4em 1em;
     color: #7d7d7d;
+  }
+  table.wikitable {
+    margin: 1em 0;
+    background-color: #f9f9f9;
+    border: 1px #aaa solid;
+    border-collapse: collapse;
+    color: black;
+    & > tr > th,
+    & > tr > td,
+    & > * > tr > th,
+    & > * > tr > td {
+        border: 1px #aaa solid;
+        padding: 0.2em;
+    }
+    & > tr > th,
+    & > * > tr > th {
+        background-color: #f2f2f2;
+        text-align: center;
+    }
+    & > caption {
+        font-weight: bold;
+    }
+    & tr:empty { display: none; }
+  }
+  table.mbox-small {
+    clear: right;
+    float: right;
+    margin: 4px 0 4px 1em;
+    width: 238px;
+    font-size: 88%;
+    line-height: 1.25em;
+    & tr:empty { display: none; }
+  }
+  .navbox, .navbox-subgroup {
+    background: #fdfdfd;
+  }
+  .navbox {
+    border: 1px solid #aaa;
+    width: 100%;
+    margin: auto;
+    clear: both;
+    font-size: 88%;
+    text-align: center;
+    padding: 1px;
   }
 }
