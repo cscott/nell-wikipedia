@@ -1,28 +1,28 @@
 CACHE MANIFEST
-# riAf+UkfBSGfFSX2z25yjCoSPxc=
+# j7biw4Sk9z/nC8eUk5VkCYxemMo=
 
 CACHE:
 css/app.css
+img/icon-128.png
+img/icon-16.png
+img/icon-48.png
 img/glyphicons-halflings-white.png
 img/glyphicons-halflings.png
+img/icon-16.ico
 img/go-home.svg
 img/go-next-paired.svg
 img/go-previous-paired.svg
-img/icon-128.png
-img/icon-16.ico
-img/icon-16.png
-img/icon-48.png
 index.html
 js/app.js
-static/biology.png
-static/earth.png
-static/humanities.png
-static/math.png
+static/wikipedia.png
 static/phys_science.png
+static/biology.png
 static/socialscience.png
 static/society.png
+static/humanities.png
+static/math.png
 static/technology.png
-static/wikipedia.png
+static/earth.png
 
 # catch-all for anything else
 NETWORK:
