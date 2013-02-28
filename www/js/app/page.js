@@ -1,7 +1,7 @@
 // Backbone model.
 // This class embodies the mediawiki content for a given page.  It handles
 // fetching the content from the network or local storage (as appropriate).
-define(['backbone', './config', 'jquery', './static', './util'], function(Backbone, Config, $, Static, Util) {
+define(['backbone', './config', 'jquery', './pagedb', './static', './util'], function(Backbone, Config, $, PageDB, Static, Util) {
 
     var Page = Object.create(null);
     Page.Model = Backbone.Model.extend({
@@ -103,6 +103,33 @@ define(['backbone', './config', 'jquery', './static', './util'], function(Backbo
             }
         });
     };
+    var readUncached = function(model, options, success, error) {
+        var markup;
+        var title = Util.normalize_title(model.id);
+        switch (title) {
+        case Config.home:
+            markup = Static.HOME;
+            break;
+        case Config.about:
+            markup = Static.ABOUT;
+            break;
+        case 'Star':
+            markup = Static.STAR;
+            break;
+        default:
+            return readParsoid(title, function(err, fields) {
+                if (err) { return error(model, err.obj, options); }
+                success(model, fields, options);
+            });
+        }
+        return convertMarkup(markup, function(err, parsoid_format) {
+            if (err) { return error(model, err.obj, options); }
+            success(model, {
+                title: title,
+                html: parsoid_format
+            }, options);
+        });
+    };
 
     Page.sync = {
         create: function(model, options, success, error) {
@@ -112,31 +139,17 @@ define(['backbone', './config', 'jquery', './static', './util'], function(Backbo
         'delete': function(model, options, success, error) {
         },
         read: function(model, options, success, error) {
-            var markup;
             var title = Util.normalize_title(model.id);
-            switch (title) {
-            case Config.home:
-                markup = Static.HOME;
-                break;
-            case Config.about:
-                markup = Static.ABOUT;
-                break;
-            case 'Star':
-                markup = Static.STAR;
-                break;
-            default:
-                return readParsoid(title, function(err, fields) {
-                    if (err) { return error(model, err.obj, options); }
-                    success(model, fields, options);
-                });
-            }
-            return convertMarkup(markup, function(err, parsoid_format) {
-                if (err) { return error(model, err.obj, options); }
-                success(model, {
-                    title: title,
-                    html: parsoid_format
-                }, options);
-            });
+            var fallback = function() {
+              readUncached(model, options, function(model, fields, options) {
+                PageDB.put(title, fields).done();
+                success(model, fields, options);
+              }, error);
+            };
+            PageDB.get(title).then(function(result) {
+                if (!result) { return fallback(); }
+                success(model, result, options);
+            }, fallback).done();
         }
     };
 

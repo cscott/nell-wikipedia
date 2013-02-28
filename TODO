@@ -1,3 +1,5 @@
+xxx: record redirects so we don't store The_Moon and Moon as different articles
+
 Instaview:
  1) put config in an instance object, so you don't alter behavior of all
     users of instaview.
