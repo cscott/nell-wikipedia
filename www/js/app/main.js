@@ -44,6 +44,9 @@ define(function (require) {
     $(document).on('click', '#button-next', function(evt) {
         window.history.forward();
     });
+    $(document).on('click', '#button-settings', function(evt) {
+        myRouter.showSettings();
+    });
 
     // Wait for the DOM to be ready before showing the network and appCache
     // state.

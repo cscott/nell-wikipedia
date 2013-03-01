@@ -113,9 +113,14 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         case Config.about:
             markup = Static.ABOUT;
             break;
+        case Config.settings:
+            markup = Static.SETTINGS;
+            break;
+        /*
         case 'Star':
             markup = Static.STAR;
             break;
+        */
         default:
             return readParsoid(title, function(err, fields) {
                 if (err) { return error(model, err.obj, options); }
