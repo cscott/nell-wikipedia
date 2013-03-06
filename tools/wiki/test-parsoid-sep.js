@@ -4,6 +4,7 @@
 // chunk size: compressed size:
 //               lzma      lzma      gzip      bzip2     lzjb      lzop      zip
 //              no param    -9        -9         -9                 -9       -9
+//  infinity -h           14967989  26650950  17930721  50197969  31544094  26651128
 //  infinity    15426238  14675333  26182154  17593259  53738192  31271534  26438118
 //  128M        15455233  14769416  26184338  17598086  53738246  31279698  26437023
 //  64M         15506011  14910867  26184657  17598560  53738367  31244642  26439352
@@ -22,6 +23,7 @@
 //  8k          22161326  22180570  27204324  23479141  53891621  32994667  27956215
 //  4k          22197510  22216601  27234325  23523785  53895232  33036109  27996098
 //  0           22213842  22233151  27256283  23548696  53899116  33068669  28101119
+//  0, w/ -h              22472213  27531832  23923680  50224034  33323238  28179632
 //uncompressed 207758353
 
 
@@ -46,13 +48,77 @@ requirejs(['commander', 'fs', 'lzma-purejs'], function(program, fs, lzmajs) {
                 'Emit each compressed chunk', false)
         .option('-d, --directory <directory name>',
                 'Directory to write compressed chunks to', null)
+        .option('-h, --html', // only seems to help lzjb
+                'Preprocess for better html compression', false)
         .option('-s, --silent',
                 "Don't emit progress messages")
         .parse(process.argv);
 
     if (program.args.length > 0) {
+        if (!/^\d+$/.test(program.args[0])) {
+            console.error('Bad chunk size argument:', program.args[0]);
+            return 1;
+        }
         CHUNK_SIZE = parseInt(program.args[0], 10);
     }
+
+    var writeNumber = function(r, num) {
+        // write a big-endian self-delimiting number (groups of 7
+        // bits, with top bit clear to indicate "more to come").
+        var size = [];
+        do {
+            size.push( num & 0x7F );
+            num = Math.floor(num / 128);
+        } while (num !== 0);
+        size[0] |= 0x80;
+        size.reverse();
+        r.push.apply(r, size);
+    };
+    var html_preprocess = function(buffer) {
+        // split text into four contexts: outside tags, inside tags, inside single-quoted
+        // attributes, and inside double-quoted attributes.
+        var state = {
+            which: 'text',
+            text: [],
+            html: [],
+            asingle: [],
+            adouble: []
+        };
+        var LT = '<'.charCodeAt(0), GT = '>'.charCodeAt(0);
+        var SQ = "'".charCodeAt(0), DQ = '"'.charCodeAt(0);
+        var i, c;
+        for (i=0; i<buffer.length; i++) {
+            c = buffer[i];
+            state[state.which].push(c);
+            switch (state.which) {
+            case 'text':
+                if (c===LT) { state.which='html'; }
+                break;
+            case 'html':
+                if (c===SQ) { state.which='asingle'; }
+                else if (c===DQ) { state.which='adouble'; }
+                else if (c===GT) { state.which='text'; }
+                break;
+            case 'asingle':
+                if (c===SQ) { state.which='html'; }
+                break;
+            case 'adouble':
+                if (c===DQ) { state.which='html'; }
+                break;
+            }
+        }
+        // result is all four arrays concatenated together... but we
+        // need to write out their lengths to be able to reverse this
+        // transform. (write text last since it's likely to be the longest)
+        var sizes = [];
+        writeNumber(sizes, state.html.length);
+        writeNumber(sizes, state.asingle.length);
+        writeNumber(sizes, state.adouble.length);
+        var result = sizes.concat(state.html, state.asingle,
+                                  state.adouble, state.text);
+        return new Buffer(result);
+    };
+
     var read_and_split_articles = function(filename, cb) {
         var all_articles = fs.readFileSync(filename);
         var i=0;
@@ -70,7 +136,10 @@ requirejs(['commander', 'fs', 'lzma-purejs'], function(program, fs, lzmajs) {
             start = ++i;
             i += parseInt(size, 10);
             //console.log(title, size, start, i);
-            var article = all_articles.slice(start, i).toString('utf8');
+            var article = all_articles.slice(start, i);
+            if (program.html) {
+                article = html_preprocess(article);
+            }
             cb(title, article);
         } while (i < all_articles.length);
         // signal last chunk
@@ -81,9 +150,8 @@ requirejs(['commander', 'fs', 'lzma-purejs'], function(program, fs, lzmajs) {
         var chunks = [], size = 0;
         return function(title, article) {
             if (title) {
-                var c = new Buffer(article, 'utf8');
-                chunks.push(c);
-                size += c.length;
+                chunks.push(article);
+                size += article.length;
             }
             if (size >= chunkLimit || !title) {
                 var b = new Buffer(size);
