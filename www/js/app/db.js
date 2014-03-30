@@ -142,7 +142,65 @@ define(['jquery'], function($) {
     };
   };
   Db.prototype.close = function() {
-    if (this.db) { this.db.close(); this.db = null; }
+    if (this.db) { this.db.close(); this.db = null; this.ready = null; }
+  };
+  var cleanupReq = function(req) {
+    // helps prevent leaks on chrome
+    req.onsuccess = req.onerror = null;
+  };
+  Db.prototype.exists = function(key) {
+    var store_name = this.schema.store_name;
+    var result = $.Deferred();
+    this.ready.then(function(db) {
+      var req = db.transaction(store_name).
+        objectStore(store_name).openCursor(IDBKeyRange.only(key));
+      req.onsuccess = function(event) {
+        // exists iff req.result is not null (but firefox returns undefined
+        // instead, sigh)
+        var exists = (req.result !==null && req.result !== undefined);
+        result.resolve(exists);
+        cleanupReq(req);
+      };
+      req.onerror = function(event) {
+        result.reject(event);
+        cleanupReq(req);
+      };
+    }, function(error) { result.reject(error); });
+    return result.promise();
+  };
+  Db.prototype.get = function(key) {
+    var store_name = this.schema.store_name;
+    var result = $.Deferred();
+    this.ready.then(function(db) {
+      var req = db.transaction(store_name).
+        objectStore(store_name).get(key);
+      req.onsuccess = function(event) {
+        result.resolve(req.result);
+        cleanupReq(req);
+      };
+      req.onerror = function(event) {
+        result.reject(event);
+        cleanupReq(req);
+      };
+    }, function(error) { result.reject(error); });
+    return result.promise();
+  };
+  Db.prototype.put = function(key, value) {
+    var store_name = this.schema.store_name;
+    var result = $.Deferred();
+    this.ready.then(function(db) {
+      var req = db.transaction(store_name, READ_WRITE).
+        objectStore(store_name).put(value, key);
+      req.onsuccess = function(event) {
+        result.resolve(req.result /* key */);
+        cleanupReq(req);
+      };
+      req.onerror = function(event) {
+        result.reject(event);
+        cleanupReq(req);
+      };
+    }, function(error) { result.reject(error); });
+    return result.promise();
   };
 
   // useful constants for subclasses

@@ -123,11 +123,13 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         */
         default:
             return readParsoid(title, function(err, fields) {
+                // XXX if err, show 'page not available; offline'
                 if (err) { return error(model, err.obj, options); }
                 success(model, fields, options);
             });
         }
         return convertMarkup(markup, function(err, parsoid_format) {
+            // XXX if err, show 'page not available; offline'
             if (err) { return error(model, err.obj, options); }
             success(model, {
                 title: title,
