@@ -1,4 +1,11 @@
 xxx: record redirects so we don't store The_Moon and Moon as different articles
+xxx: record broken links, colorize
+ 0: "page not available"
+ 1: "page needs to be written"
+ 2: "offline cached"
+ 3: latest mediawiki
+ 4: static mediawiki markup
+ 5: latest parsoid
 
 Instaview:
  1) put config in an instance object, so you don't alter behavior of all
@@ -20,8 +27,9 @@ Instaview:
        (see 'Pi' article)
 App:
  1) xml-ize the home/about articles
- 2) store/fetch content from local cache
-    write separate (chunked?) 'index'; actual storage is just done in
+ x) store/fetch content from local cache
+ 2b) store/fetch *image* content from local cache
+ 2c) write separate (chunked?) 'index'; actual storage is just done in
     append-only blocks (to preserve locality of templates)
     rewrite entire block if an article is updates (rare case?)
     compress blocks
@@ -46,3 +54,4 @@ App:
     - purge downloaded content
     - download seed (for language X)
     - submit offline edits?
+11) add left sidebar for toc
