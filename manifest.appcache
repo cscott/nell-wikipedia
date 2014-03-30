@@ -1,28 +1,34 @@
 CACHE MANIFEST
-# 3gtgVa3j5TaF9k0BPyTiS+/+/Vw=
+# tbJv/R3h49AwQxBaJSp+Q7nrNTw=
 
 CACHE:
+CNAME
 css/app.css
-img/icon-128.png
-img/icon-16.png
-img/icon-48.png
 img/glyphicons-halflings-white.png
 img/glyphicons-halflings.png
-img/icon-16.ico
 img/go-home.svg
 img/go-next-paired.svg
 img/go-previous-paired.svg
+img/icon-128.png
+img/icon-16.ico
+img/icon-16.png
+img/icon-48.png
+img/splash-320x460.png
+img/splash-640x920.png
+img/splash-748x1024.png
+img/splash-768x1004.png
 index.html
 js/app.js
-static/wikipedia.png
-static/phys_science.png
+manifest.webapp
 static/biology.png
-static/socialscience.png
-static/society.png
+static/earth.png
 static/humanities.png
 static/math.png
+static/phys_science.png
+static/socialscience.png
+static/society.png
 static/technology.png
-static/earth.png
+static/wikipedia.png
 
 # catch-all for anything else
 NETWORK:
