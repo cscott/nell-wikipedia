@@ -11,8 +11,9 @@
     "baseUrl": "www/js/lib"
   },
   "dependencies": {
-    "volo-ghdeploy": "*",
-    "volo-appcache": "*",
+    "volo": "~0.3.1",
+    "volo-ghdeploy": "~0.0.6",
+    "volo-appcache": "~0.0.2",
     "connect": "~2.4.4",
     "less-middleware": "~0.1.5"
   },
