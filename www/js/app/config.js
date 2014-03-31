@@ -3,10 +3,7 @@ define([], function() {
     var Config = {
         // parsoid helper
         parsoid_host: 'parsoid-lb.eqiad.wikimedia.org',
-        // official mw service doesn't have a public _wikitext endpoint
-        //parsoid_convert_mw_url: 'http://{{parsoid_host}}/_wikitext/',
-        parsoid_convert_mw_url: 'http://nell-parsoid.aws.af.cm/_wikitext/',
-        parsoid_fetch_url: 'http://{{parsoid_host}}/{{lang}}/{{title}}',
+        parsoid_api_url: 'http://{{parsoid_host}}/{{lang}}/{{title}}',
         // whether to use hashes or slashes
         path_root: '#!/', /* '#!/' or '#' or '' */
 

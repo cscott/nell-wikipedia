@@ -29,11 +29,11 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         };
     };
     // callback(err, parsoid_format)
-    var convertMarkup = function(markup, callback) {
+    var convertMarkup = function(title, markup, callback) {
         return $.ajax({
-            url: url_subst(Config.parsoid_convert_mw_url),
+            url: url_subst(Config.parsoid_api_url, { title: (title || '') }),
             type: 'POST',
-            data: { content: markup, format: 'html' },
+            data: { wt: markup },
             dataType: 'html',
             error: xhr_error(callback),
             success: function(data, textStatus, xhr) {
@@ -78,7 +78,7 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         });
     };
     var readParsoid = function(title, callback) {
-        var url = url_subst(Config.parsoid_fetch_url, { title: title });
+        var url = url_subst(Config.parsoid_api_url, { title: title });
         return $.ajax({
             url: url,
             dataType: 'html',
@@ -128,7 +128,7 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
                 success(model, fields, options);
             });
         }
-        return convertMarkup(markup, function(err, parsoid_format) {
+        return convertMarkup(title, markup, function(err, parsoid_format) {
             // XXX if err, show 'page not available; offline'
             if (err) { return error(model, err.obj, options); }
             success(model, {
