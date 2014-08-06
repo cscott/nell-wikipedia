@@ -37,7 +37,8 @@ define(['backbone','instaview','./page'], function(Backbone, InstaView, Page) {
                 // specially handle local images
                 var localimg_re = /^[.]+\/(Special:FilePath\/|File:)Nell:/;
                 if (localimg_re.test(url)) {
-                    return url.replace(localimg_re, 'static/');
+                    return url.replace(localimg_re, 'static/').
+                        replace(/[?].*$/, '');
                 }
                 // xxx fixme this isn't very general
                 if (url.slice(0,2)=='./') {
