@@ -1,15 +1,17 @@
 // Configuration for the wikipedia activity.
 define([], function() {
     var Config = {
-        // parsoid helper
-        parsoid_host: 'parsoid-lb.eqiad.wikimedia.org',
-        parsoid_api_url: 'http://{{parsoid_host}}/{{lang}}/{{title}}',
+        // rest API
+        rest_url: 'https://{{wiki}}/api/rest_v1',
+        rest_post_url: '{{rest_url}}/transform/wikitext/to/html/{{title}}',
+        rest_get_url: '{{rest_url}}/page/html/{{title}}',
+
         // whether to use hashes or slashes
         path_root: '#!/', /* '#!/' or '#' or '' */
 
-        // language to use for wikipedia content.
-        // (ie, <lang>.wikipedia.org)
-        lang: 'simplewiki',
+        // which wiki project to use.
+        // (ie, en.wikipedia.org, de.wikipedia.org, ...)
+        wiki: 'simple.wikipedia.org',
 
         // xxx: these should be localized?
         // portal page

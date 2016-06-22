@@ -19,14 +19,14 @@ define(['backbone', './config', './page', './util'], function(Backbone, Config, 
         defaultPage: function() {
             this.gotoHome();
         },
-        wikiPage: function(lang, title) {
-            console.log('wiki view',lang, title,'opened');
+        wikiPage: function(wiki, title) {
+            console.log('wiki view',wiki, title,'opened');
             var model = new Page.Model({title: title});
             this.view.setModel(model);
             model.fetch();
         },
         gotoWiki: function(title) {
-            this.navigate(base + Config.lang + "/" +
+            this.navigate(base + Config.wiki + "/" +
                           Util.normalize_title(title), true);
         },
         gotoHome: function() {
@@ -35,7 +35,7 @@ define(['backbone', './config', './page', './util'], function(Backbone, Config, 
     });
     Router.prototype.routes[base+'about'] = "showAbout";
     Router.prototype.routes[base+'settings'] = "showSettings";
-    Router.prototype.routes[base+'*lang/*title'] = "wikiPage";
+    Router.prototype.routes[base+'*wiki/*title'] = "wikiPage";
     // order of route definition matters (sigh) so wildcard has to be last
     Router.prototype.routes['*other'] = "defaultPage";
     Router.use_hash = use_hash;

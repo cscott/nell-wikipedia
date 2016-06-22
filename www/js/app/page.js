@@ -31,9 +31,9 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
     // callback(err, parsoid_format)
     var convertMarkup = function(title, markup, callback) {
         return $.ajax({
-            url: url_subst(Config.parsoid_api_url, { title: (title || '') }),
+            url: url_subst(Config.rest_post_url, { title: (title || '') }),
             type: 'POST',
-            data: { wt: markup },
+            data: { wikitext: markup },
             dataType: 'html',
             error: xhr_error(callback),
             success: function(data, textStatus, xhr) {
@@ -47,7 +47,7 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         });
     };
     var readMarkup = function(title, callback) {
-        var url=url_subst("http://{{lang}}.wikipedia.org/wiki/Special:Export");
+        var url=url_subst("https://{{wiki}}/wiki/Special:Export");
         var query = "select * from xml where url='"+url+"'";
         return $.ajax({
             url: 'http://query.yahooapis.com/v1/public/yql',
@@ -78,22 +78,48 @@ define(['backbone', './config', 'jquery', './pagedb', './static', './util'], fun
         });
     };
     var readParsoid = function(title, callback) {
-        var url = url_subst(Config.parsoid_api_url, { title: title });
+        var url = url_subst(Config.rest_get_url, { title: title });
         return $.ajax({
             url: url,
             dataType: 'html',
             error: xhr_error(callback),
             success: function(data, textStatus, xhr) {
                 if (data) {
-                    var page = { revision: { text: { content: data } } };
-                    // XXX parse out revision? title? from html
+                    var doc = (new DOMParser()).
+                        parseFromString(data, "text/html");
+                    var get = function(selector, attr) {
+                        var el = doc.querySelector(selector);
+                        return attr ? (el && el.getAttribute(attr)) : el;
+                    };
+                    var getRev = function(selector, attr) {
+                        var v = get(selector, attr);
+                        if (!v) { return null; }
+                        var m = /revision\/(\d+)$/.exec(v);
+                        return m && parseInt(m[1], 10);
+                    };
+
+                    var revision = getRev('html[about]', 'about');
+
+                    var htitle = get('head > title');
+                    htitle = htitle && htitle.textContent;
+
+                    var parentid = getRev('head > link[rel="dc:replaces"]',
+                                          'resource');
+
+                    var sha1 = get('head > meta[property="mw:revisionSHA1"]',
+                                   'content');
+
+                    var modified = get('head > meta[property="dc:modified"]',
+                                       'content');
+                    modified = modified && Date.parse(modified);
+
                     var fields = {
-                        title: page.title || title,
-                        revision: page.revision.id,
-                        parentid: page.revision.parentid,
-                        sha1: page.revision.sha1,
-                        timestamp: page.revision.timestamp,
-                        html: page.revision.text.content || ''
+                        title: htitle || title || undefined,
+                        revision: revision || undefined,
+                        parentid: parentid || undefined,
+                        sha1: sha1 || undefined,
+                        timestamp: modified || undefined,
+                        html: data || ''
                     };
                     callback(null, fields);
                 } else {
